@@ -2,7 +2,7 @@ ifndef::imagesdir[:imagesdir: src/main/resources/images/]
 
 image::logo.png[logo,200,200,align="center"]
 
-== APP版本管理系统
+== Kraken 管理系统
 
 [[License]]
 image::https://img.shields.io/badge/License-Apache%202.0-blue.svg[link="https://opensource.org/licenses/Apache-2.0"] 
@@ -21,7 +21,7 @@ app-version
 └───modules
 │   └───app-version-common (公共代码 实体类 工具类等)
 │   └───app-version-manager (后台管理模块)
-│   └───app-version-rest (与APP交互的 Rest 接口模块)
+│   └───example (与APP交互的 Rest 接口模块)
 └───web
 │   └───dashboard (前端)
 └───src
