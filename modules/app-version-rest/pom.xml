@@ -13,7 +13,7 @@
     <artifactId>app-version-rest</artifactId>
     <name>app-version-rest</name>
     <description>APP 版本管理 REST 端</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
