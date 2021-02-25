@@ -16,14 +16,8 @@ APP版本管理是一套多应用更新发版的管理平台。 +
 === 项目结构
 
 ```
-app-version
+Kraken-Example
 │   README.adoc
-└───modules
-│   └───app-version-common (公共代码 实体类 工具类等)
-│   └───app-version-manager (后台管理模块)
-│   └───example (与APP交互的 Rest 接口模块)
-└───web
-│   └───dashboard (前端)
 └───src
 │   └───main
 │       └───asciidoc 相关文档
@@ -70,7 +64,7 @@ image::https://raw.githubusercontent.com/birdmichael/app-version-swift/master/sh
 * 自动维护每次弹出，弹出一次逻辑
 * 配置文本框最大高度（默认不可滚动，不显示滚动条）
 
-项目地址：https://github.com/birdmichael/app-version-swift
+项目地址：https://github.com/xlsp/KrakenLC
 
 
 === 答疑帮助
