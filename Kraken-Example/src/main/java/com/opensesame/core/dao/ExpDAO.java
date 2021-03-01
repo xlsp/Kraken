@@ -4,6 +4,7 @@ import com.mars.common.annotation.jdbc.MarsDao;
 import com.mars.jdbc.core.annotation.DataSource;
 import com.mars.jdbc.core.annotation.MarsGet;
 import com.mars.jdbc.core.annotation.MarsSelect;
+import com.mars.jdbc.core.helper.templete.JdbcTemplate;
 import com.opensesame.core.dto.ExpDTO;
 
 import java.util.List;
@@ -67,21 +68,21 @@ public abstract class ExpDAO {
 //     */
 //    @MarsSelect(sql = "select a,b,c from 表名 where a=#{a} and b=${b}", resultType = ExpDTO.class, page = true)
 //    public abstract PageModel<ExpDTO> selectPageList(PageParamModel pageParamModel);
-//
-//    /**
-//     * sql语句不固定的查询
-//     *
-//     * @param expDTO
-//     * @return
-//     * @throws Exception
-//     */
-//    public List<ExpDTO> selectList2(ExpDTO expDTO) throws Exception {
-//        StringBuffer sql = new StringBuffer();
-//
-//        // 这里根据expDTO里的参数，判断，然后拼接sql就好了
-//
-//        return JdbcTemplate.get("数据源name，不传默认采用第一个").selectList(sql.toString(), expDTO, ExpDTO.class);
-//    }
+
+    /**
+     * sql语句不固定的查询
+     *
+     * @param expDTO
+     * @return
+     * @throws Exception
+     */
+    public List<ExpDTO> selectList2(ExpDTO expDTO) throws Exception {
+        StringBuffer sql = new StringBuffer();
+
+        // 这里根据expDTO里的参数，判断，然后拼接sql就好了
+
+        return JdbcTemplate.get("数据源name，不传默认采用第一个").selectList(sql.toString(), expDTO, ExpDTO.class);
+    }
 //
 //    /**
 //     * sql语句不固定的分页查询

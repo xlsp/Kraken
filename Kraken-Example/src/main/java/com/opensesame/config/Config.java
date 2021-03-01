@@ -73,10 +73,11 @@ public class Config extends MarsConfig {
         // 用的是阿里巴巴的 druid数据源，其他属性可自行查阅
         Properties properties = new Properties();
         properties.put("name", "dataSource");
-        properties.put("url", "");
-        properties.put("username", "");
-        properties.put("password", "");
-        properties.put("driverClassName", "com.mysql.jdbc.Driver");
+//        properties.put("url", "jdbc:mysql://192.168.1.200:3306/shopname?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false");
+        properties.put("url", "jdbc:mysql://db.localhost:3308/b2c_one?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false");
+        properties.put("username", "root");
+        properties.put("password", "123456");
+        properties.put("driverClassName", "com.mysql.cj.jdbc.Driver");
 
         list.add(properties);
 

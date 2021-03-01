@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 所有实体类都支持lombok，这里为了兼容所有的环境，就还是采用的原始的get，set
  */
-public class ExpVO {
+public class LCRequestRefundVO {
 
     @MarsDataCheck(notNull = true, msg = "名称不可以为空")
     private String name;
@@ -18,7 +18,7 @@ public class ExpVO {
     @MarsDataCheck(notNull = true, msg = "名称们不可以为空", apis = {"expGet*"})
     private String[] names;
 
-    private List<ExpVO> list;
+    private List<LCRequestRefundVO> list;
 
     /**
      * 这个变量名不需要跟参数key一样，他会把所有的文件都放里面
@@ -74,11 +74,11 @@ public class ExpVO {
         this.date = date;
     }
 
-    public List<ExpVO> getList() {
+    public List<LCRequestRefundVO> getList() {
         return list;
     }
 
-    public void setList(List<ExpVO> list) {
+    public void setList(List<LCRequestRefundVO> list) {
         this.list = list;
     }
 }

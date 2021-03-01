@@ -1,17 +1,14 @@
-package com.opensesame.core.service;
+package com.opensesame.api;
 
 import com.mars.common.annotation.bean.MarsBean;
 import com.mars.common.annotation.bean.MarsTimer;
 import com.mars.common.annotation.bean.MarsWrite;
 import com.mars.common.base.InitBean;
 import com.mars.server.server.request.HttpMarsResponse;
-import com.opensesame.api.vo.ExpVO;
 import com.opensesame.api.vo.LCRestVO;
 import com.opensesame.core.dao.ExpDAO;
-//import com.tairanchina.csp.avm.utils.HttpGetPostUtil;
-//import com.tairanchina.csp.avm.utils.Result;
-//import com.tairanchina.csp.avm.utils.ResultGenerator;
-import com.opensesame.core.utils.HttpGetPostUtil;
+import com.opensesame.core.utils.HttpGetUtil;
+import com.opensesame.core.utils.JobService;
 import com.opensesame.core.utils.Result;
 import com.opensesame.core.utils.ResultGenerator;
 import org.slf4j.Logger;
@@ -21,7 +18,6 @@ import sun.misc.BASE64Decoder;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -49,10 +45,21 @@ public class LCRestApiService implements InitBean {
         logger.info("执行了初始化bean, bean里面注入了DAO: " + expDAO);
     }
 
-    public List<ExpVO> expGetRequest(ExpVO expVO) {
-        String results = "https://lab.magiconch.com/api/hosts/unicom-host";
-        results = getExpResultData(results);
-        return null;
+    public Result expGetRequest() {
+        JobService.push(() -> {
+            try {
+                String results = "https://lab.magiconch.com/api/hosts/unicom-host";
+                results = getExpResultData(results);
+                System.out.println("results = " + results);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+
+            }
+            return true;
+        });
+        Result resultSuccess = ResultGenerator.genSuccessResult("获取成功");
+        return resultSuccess;
     }
 
     //    @Traction(level = TractionLevel.READ_COMMITTED)
@@ -155,7 +162,7 @@ public class LCRestApiService implements InitBean {
     private String getExpResultData(String results) {
         logger.info("hello world");
         logger.info("The world dies");
-        results = HttpGetPostUtil.get("https://lab.magiconch.com/api/hosts/unicom-host", null);
+        results = HttpGetUtil.get("https://lab.magiconch.com/api/hosts/unicom-host", null);
         return results;
     }
 

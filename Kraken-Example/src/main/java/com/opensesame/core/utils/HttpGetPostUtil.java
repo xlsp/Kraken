@@ -9,7 +9,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 public class HttpGetPostUtil {
@@ -37,7 +40,7 @@ public class HttpGetPostUtil {
             if (responseEntity != null) {
                 System.out.println("响应内容长度为:" + responseEntity.getContentLength());
                 System.out.println("响应内容为:" + EntityUtils.toString(responseEntity));
-                text = String.valueOf(responseEntity.getContentLength());
+                text = "";
             }
         } catch (ClientProtocolException e) {
             e.printStackTrace();
@@ -59,8 +62,5 @@ public class HttpGetPostUtil {
             }
         }
         return text;
-
     }
-
-
 }

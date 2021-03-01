@@ -1,5 +1,7 @@
 package com.opensesame.core.utils;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -8,10 +10,13 @@ import java.io.Serializable;
  * @email 2449207463@qq.com
  * @link https://github.com/newbee-ltd
  */
+@Data
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1L;
     private int error_code;
     private String error_info;
+    private int code;
+    private String msg;
     private T data;
 
     public Result() {

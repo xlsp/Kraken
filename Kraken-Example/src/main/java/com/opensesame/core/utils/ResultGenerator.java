@@ -16,23 +16,23 @@ public class ResultGenerator {
 
     public static Result genSuccessResult() {
         Result result = new Result();
-        result.setError_code(RESULT_CODE_SUCCESS);
-        result.setError_info(DEFAULT_SUCCESS_MESSAGE);
+        result.setCode(RESULT_CODE_SUCCESS);
+        result.setMsg(DEFAULT_SUCCESS_MESSAGE);
 
         return result;
     }
 
     public static Result genSuccessResult(String message) {
         Result result = new Result();
-        result.setError_code(RESULT_CODE_SUCCESS);
-        result.setError_info(message);
+        result.setCode(RESULT_CODE_SUCCESS);
+        result.setMsg(message);
         return result;
     }
 
     public static Result genSuccessResult(Object data) {
         Result result = new Result();
-        result.setError_code(RESULT_CODE_SUCCESS);
-        result.setError_info(DEFAULT_SUCCESS_MESSAGE);
+        result.setCode(RESULT_CODE_SUCCESS);
+        result.setMsg(DEFAULT_SUCCESS_MESSAGE);
         result.setData(data);
         return result;
     }
