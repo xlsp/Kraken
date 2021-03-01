@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mars.common.annotation.bean.MarsBean;
 import com.mars.common.annotation.bean.MarsTimer;
+import com.mars.common.annotation.bean.MarsWrite;
 import com.mars.common.base.InitBean;
 import com.mars.jdbc.core.helper.templete.JdbcTemplate;
 import com.opensesame.api.vo.LCFanyiVO;
+import com.opensesame.core.dao.LCFanyiDAO;
 import com.opensesame.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,18 +30,17 @@ public class LCFanyiApiService implements InitBean {
     private static final String realPathForWin = "D:\\apache-tomcat-9.0.27\\Localizables\\";
 
     /**
-     * 为了让大家可以快速的跑起来，所以本示例没有连接数据库
      * 所以自然也就不会调用dao的方法了，这里注入进来dao，只是为了演示IOC的用法
      */
-//    @MarsWrite
-//    private ExpDAO expDAO;
+    @MarsWrite
+    private LCFanyiDAO fanyiDAO;
 
     /**
      * 初始化bean示例
      */
     @Override
     public void init() {
-        logger.info("执行了初始化bean, bean里面注入了DAO: ");
+        logger.info("执行了初始化bean, bean里面注入了DAO: " + fanyiDAO);
     }
 
     public Result getTranslate(LCFanyiVO fanyiVO) throws InterruptedException {
@@ -72,8 +73,9 @@ public class LCFanyiApiService implements InitBean {
             }
             JobService.push(() -> {
                 try {
-                    List<Map> job_resultArr2 = JdbcTemplate.get().selectList(
-                            "select * from fanyi_job j ");
+                    List<Map> job_resultArr2 = fanyiDAO.selectFromJob();
+//                    JdbcTemplate.get().selectList(
+//                            "select * from fanyi_job j ");
                     System.out.println("\n" + job_resultArr2.size());
                     if (fanyiVO.getQuery().length() > 0 && job_resultArr2.size() > 0) {
                         Date date = new Date();
@@ -128,8 +130,7 @@ public class LCFanyiApiService implements InitBean {
         try {
             //System.err.println("定时执行翻译任务时间: " + LocalDateTime.now() + " >> " + getNumData());
             //num++;
-            List<Map> job_resultArr2 = JdbcTemplate.get().selectList(
-                    "select * from fanyi_job j ");
+            List<Map> job_resultArr2 = fanyiDAO.selectFromJob();
             if (job_resultArr2 != null) {
                 if (job_resultArr2.size() > 0) {
 
