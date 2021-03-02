@@ -62,22 +62,21 @@ public class LCFanyiApiService implements InitBean {
     //    @Traction(level = TractionLevel.READ_COMMITTED)
     public Result translateRequest(LCFanyiVO fanyiVO) throws Exception {
         Result responce = ResultGenerator.genSuccessResult("");
-
         if (getYiNum(fanyiVO.getQuery()) == 0) {
+            System.out.println(fanyiVO.getQuery() + " getYiNum = " + getYiNum(fanyiVO.getQuery()));
             try {
                 if (fanyiVO.getQuery().length() > 0) {
-                    int res = JdbcTemplate.get().update("INSERT INTO fanyi_job (original) VALUES('" + fanyiVO.getQuery() + "'); ");
+                    int res = fanyiDAO.insertFromJob(fanyiVO.getQuery());
+//                    int res = JdbcTemplate.get().update("INSERT INTO fanyi_job (original) VALUES('" + fanyiVO.getQuery() + "'); ");
                     System.out.println("fanyi_job sql insert()	" + res);
                 }
             } catch (Exception e2) {
             }
             JobService.push(() -> {
                 try {
-                    List<Map> job_resultArr2 = fanyiDAO.selectFromJob();
-//                    JdbcTemplate.get().selectList(
-//                            "select * from fanyi_job j ");
-                    System.out.println("\n" + job_resultArr2.size());
-                    if (fanyiVO.getQuery().length() > 0 && job_resultArr2.size() > 0) {
+                    Integer job_resultCount = fanyiDAO.selectCountFromJob();
+                    System.out.println("\n" + job_resultCount);
+                    if (fanyiVO.getQuery().length() > 0 && job_resultCount > 0) {
                         Date date = new Date();
                         JiGuangPushUtil.pushNotice("alias", "481", "你有新翻译'" + fanyiVO.getQuery() + "'任务，请及时处理" + date.toString());
                     }
@@ -89,7 +88,7 @@ public class LCFanyiApiService implements InitBean {
                 return true;
             });
         } else {
-            String res = JdbcTemplate.get().selectOne("select " + fanyiVO.getLang() + " from fanyi f where f.original='" + fanyiVO.getQuery() + "' limit 0,1", String.class);
+            String res = JdbcTemplate.get().selectOne("select " + fanyiVO.getLang() + " from fanyi f where f.original='" + fanyiVO.getQuery() + "' limit 0,1", Map.class).get(fanyiVO.getLang()).toString();
             if (res.length() > 0) {
                 System.out.println("数据库里有该数据	翻译为	" + res);
                 responce.setData(res);
@@ -101,24 +100,13 @@ public class LCFanyiApiService implements InitBean {
     }
 
     /**
-     * @param query
-     * @return
+     * @param query 查某词
+     * @return 查询ALL翻译结果数量
      */
     public int getYiNum(String query) {
-        try {
-            List resultArr = JdbcTemplate.get().selectList(
-                    "select * from fanyi f where f.original='" + query + "' limit 0,1");
-            if (resultArr == null) {
-                return 0;
-            } else {
-                return resultArr.size();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
 
+        return fanyiDAO.selectCountById(query);
+    }
 
     /**
      * 定时任务示例
@@ -130,23 +118,21 @@ public class LCFanyiApiService implements InitBean {
         try {
             //System.err.println("定时执行翻译任务时间: " + LocalDateTime.now() + " >> " + getNumData());
             //num++;
-            List<Map> job_resultArr2 = fanyiDAO.selectFromJob();
-            if (job_resultArr2 != null) {
-                if (job_resultArr2.size() > 0) {
+            Integer job_resultCount = fanyiDAO.selectCountFromJob();
+            if (job_resultCount > 0) {
+                List<Map> job_resultArr2 = fanyiDAO.selectFromJob();
 
-                    for (int i = 0; i < job_resultArr2.size(); i++) {
-                        System.out.println(i + "\n" + job_resultArr2.get(i));
-                        String tempQuery = (String) job_resultArr2.get(i).get("original");
-                        fanyiJob1(tempQuery, (job_resultArr2.size() - i));
+                for (int i = 0; i < job_resultCount; i++) {
+                    System.out.println(i + "\n" + job_resultArr2.get(i));
+                    String tempQuery = (String) job_resultArr2.get(i).get("original");
+                    fanyiJob1(tempQuery, (job_resultCount - i));
 //					Thread.sleep(1000*job_resultArr2.size());
-                    }
-                    Date date = new Date();
-                    JiGuangPushUtil.pushNotice("alias", "481", "你的翻译任务已经执行完毕，请及时查看" + date.toString());
                 }
-                return job_resultArr2.size();
-            } else {
-                return 0;
+                Date date = new Date();
+                JiGuangPushUtil.pushNotice("alias", "481", "你的翻译任务已经执行完毕，请及时查看" + date.toString());
             }
+            return job_resultCount;
+
             //System.err.println("结束翻译任务定时任务时间: " + LocalDateTime.now() + " >> " + getNumData());
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,7 +163,7 @@ public class LCFanyiApiService implements InitBean {
                 Object result04;
                 Object result05;
                 if (getYiNum(query) > 0) {
-                    //return true;
+                    return;
                 }
 //                		Thread.sleep(2000);
                 result01 = this.baidutranslate(query, "zh");
@@ -215,7 +201,7 @@ public class LCFanyiApiService implements InitBean {
                                 ((String) result05).length() > 0
                 ) {
                     try {
-                        int out_res = JdbcTemplate.get().update("INSERT INTO fanyi VALUES(\""
+                        String addSql = "INSERT INTO fanyi VALUES(\""
                                 + query
                                 + "\", \""
                                 + result01
@@ -227,7 +213,8 @@ public class LCFanyiApiService implements InitBean {
                                 + result04
                                 + "\",\""
                                 + result05
-                                + "\"); ");
+                                + "\"); ";
+                        int out_res = JdbcTemplate.get().update(addSql.toString());
                         System.out.println("fanyi sql insert()	" + out_res);
                         long endStart = System.currentTimeMillis() - start;
                         System.out.println("翻译耗时：*********" + endStart + "毫秒");
@@ -339,7 +326,7 @@ public class LCFanyiApiService implements InitBean {
             Map<String, String> params = new HashMap<>();
             params.put("targetLang", desc);
             params.put("text", query);
-            return HttpGetUtil.get("", params);
+            return HttpGetUtil.get("http://18.162.56.208:8880/app/googleapitranslate.do", params);
 //			return temp.getString("dst");
         } catch (Exception e) {
             try {
@@ -394,10 +381,11 @@ public class LCFanyiApiService implements InitBean {
      */
     public Map<String, Object> writeYiResultWithLang(String lang) throws Exception {
         Map<String, Object> responce = new HashMap<>();
-        List<Map> resultArr1 = JdbcTemplate.get().selectList("select * from fanyi");
+        Integer resultArr1Count = fanyiDAO.selectCount();
 
         List<String> resultTempArr = new ArrayList<String>();
-        for (int j = 0; j < resultArr1.size(); j++) {
+        for (int j = 0; j < resultArr1Count; j++) {
+            List<Map> resultArr1 = fanyiDAO.select();
             Map<String, Object> map1 = resultArr1.get(j);
             String tempString = "\"" + map1.get("original").toString() + "\" = \"" + map1.get(lang).toString() + "\";";
 

@@ -33,7 +33,7 @@ public interface LCFanyiApi {
      * @param fanyiVO
      * @return
      */
-    @RequestMethod({ReqMethod.POST, ReqMethod.GET})
+    @RequestMethod(ReqMethod.POST)//, ReqMethod.GET
     @MarsLog
     Result translateRequest(LCFanyiVO fanyiVO);
 
